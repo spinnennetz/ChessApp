@@ -21,7 +21,7 @@ public class King extends Figure {
 		PossibleMovesField possibleMoves = possibleStraightMoves.addField(possibleDiagonalMoves);
 		return possibleMoves;
 	}
-	
+
 	@Override
 	public String getFigureType() {
 		return "King";

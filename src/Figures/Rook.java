@@ -21,7 +21,6 @@ public class Rook extends Figure {
 		return possibleMoves;
 	}
 
-
 	@Override
 	public String getFigureType() {
 		return "Rook";

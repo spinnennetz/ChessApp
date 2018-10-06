@@ -5,6 +5,7 @@ import java.util.List;
 
 import CheckField.CheckField;
 import CheckField.PossibleMovesField;
+import CheckField.ThreatField;
 import Vector.Vector;
 
 public abstract class Figure {
@@ -70,6 +71,12 @@ public abstract class Figure {
 	
 	public abstract PossibleMovesField showPossibleMoves(Vector position, CheckField figurePositions);
 	
+	public PossibleMovesField showNotCheckmatePossibleMoves(Vector position, CheckField figurePositions) {
+		PossibleMovesField possibleMoves = this.showPossibleMoves(position, figurePositions);
+		possibleMoves = this.checkPossibleMovesForCheck(possibleMoves, figurePositions);
+		return possibleMoves;
+	}
+	
 	public Vector showMoveResult(Vector position, Vector moveLength) {
 		return position.add(moveLength);
 	}
@@ -99,6 +106,29 @@ public abstract class Figure {
 		direction.setValue(indicator, directionLength);
 		move = move.add(direction);
 		return showMoveResult(position, move);
+	}
+	
+	public boolean moveLeadsToCheck(Vector checkablePosition, CheckField figurePositions) {
+		CheckField checkNewPositions = figurePositions.showMove(this.position, checkablePosition);
+		boolean check = checkNewPositions.getCheck(this.color);
+		return check;
+	}
+	
+	public PossibleMovesField checkPossibleMovesForCheck(PossibleMovesField possibleMoves, CheckField figurePositions) {
+		PossibleMovesField forCheckCheckedPossibleMoves = possibleMoves;
+		int fieldXSize = forCheckCheckedPossibleMoves.getXSize();
+		int fieldYSize = forCheckCheckedPossibleMoves.getYSize();
+		for (int i=0; i < fieldXSize; i++) {
+			for (int j=0; j < fieldYSize; j++) {
+				position = new Vector(i,j);
+				boolean leadsToCheck = false;
+				if (forCheckCheckedPossibleMoves.getFieldValue(position)) {
+					leadsToCheck = this.moveLeadsToCheck(position, figurePositions);
+					forCheckCheckedPossibleMoves.setFieldValue(position, !leadsToCheck);
+				}
+			}
+		}
+		return forCheckCheckedPossibleMoves;
 	}
 	
 	public PossibleMovesField showAllPossibleStraightMoves(Vector position, CheckField figurePositions, int maxMoveLength) {
@@ -181,15 +211,23 @@ public abstract class Figure {
 		return threatsCounter;
 	}
 	
-	public void moveTo(Vector targetPosition, CheckField figurePositions) {
+	public int getCurrentInThreats(CheckField figurePositions) {
+		ThreatField inThreats = figurePositions.getThreats(this.color*(-1));
+		int threatsCounter = inThreats.getFieldValue(this.position);
+		return threatsCounter;
+	}
+	
+	public boolean moveTo(Vector targetPosition, CheckField figurePositions) {
 		PossibleMovesField possibleMoves = this.showPossibleMoves(this.position, figurePositions);
-		if (possibleMoves.getFieldValue(targetPosition)) {
+		boolean moveWorking = possibleMoves.getFieldValue(targetPosition);
+		if (moveWorking) {
 			this.setPosition(targetPosition);
 		}
 		Figure figureOnTarget = figurePositions.getFieldValue(targetPosition);
 		if (figureOnTarget != null) {
 			figureOnTarget.remove();
 		}
+		return moveWorking;
 	}
 
 	public void remove() {

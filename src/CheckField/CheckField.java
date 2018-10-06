@@ -8,11 +8,15 @@ import java.util.List;
 public class CheckField extends GridField<Figure> {
 	
 	public Figure[][] checkField;
+	public boolean[] check;
+	public boolean checkMate;
 
 	public CheckField(Vector sizes) {
 		super(sizes);
 		this.checkField = new Figure[sizes.getValue(0)][sizes.getValue(1)];
 		this.gridfield = this.checkField;
+		this.check = new boolean[2];
+		this.checkMate = false;
 	}
 
 	@Override
@@ -30,6 +34,27 @@ public class CheckField extends GridField<Figure> {
 		return this.checkField[xPos][yPos];
 	}
 	
+	public boolean getCheck(int color) {
+		if (color < 0) {
+			return this.check[0];
+		} else if (color > 0) {
+			return this.check[1];
+		}
+		return false;
+	}
+	
+	public boolean getCheckMate() {
+		return this.checkMate;
+	}
+	
+	public void setCheck(int color, boolean check) {
+		if (color < 0) {
+			this.check[0] = check;
+		} else if (color > 0) {
+			this.check[1] = check;
+		}
+	}
+	
 	public List<Figure> getCurrentFigures() {
 		List<Figure> figureList = new LinkedList<Figure>();
 		Vector currentPosition;
@@ -44,27 +69,66 @@ public class CheckField extends GridField<Figure> {
 		return figureList;
 	}
 	
-	public ThreatField getThreats() {
+	public ThreatField getThreats(int color) {
 		ThreatField result = new ThreatField(this.sizes);
 		PossibleMovesField possibleMoves = new PossibleMovesField(this.sizes);
 		List<Figure> figureList = this.getCurrentFigures();
 		for (Figure figure : figureList) {
-			possibleMoves = figure.showPossibleMoves(figure.getPosition(), this);
-			result = result.addField(possibleMoves.toThreat());
+			if(figure.getColor() == color) {
+				possibleMoves = figure.showPossibleMoves(figure.getPosition(), this);
+				result = result.addField(possibleMoves.toThreat());
+			}
 		}
 		return result;
 	}
 	
+	public int getThreatsAt(Vector position, int color) {
+		ThreatField threats = this.getThreats(color);
+		int threatNumber = threats.getFieldValue(position);
+		return threatNumber;
+	}
+	
+	public Figure getKing(int color) {
+		for (int i=0; i<this.xSize; i++) {
+			for (int j=0; j<this.ySize; j++) {
+				Figure checkableFigure = this.getFieldValue(new Vector(i,j));
+				if(checkableFigure != null) {
+					if (checkableFigure.getFigureType() == "King") {
+						if (checkableFigure.getColor() == color) {
+							return checkableFigure;
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	public boolean checkCheck(int color) {
+		if (this.getKing(color) == null) {
+			this.checkMate = true;
+			return true;
+		} else {
+			return this.getKing(color).getCurrentInThreats(this) > 0;
+		}
+	}
+	
 	public CheckField moveFigure(Vector startPosition, Vector targetPosition) {
 		CheckField newCheckField = this;
+		Figure movingFigure = this.getFieldValue(startPosition);
+		if (movingFigure.moveTo(targetPosition, this)) {
+			newCheckField = this.showMove(startPosition, targetPosition);
+		}
+		return newCheckField;
+	}
+	
+	public CheckField showMove(Vector startPosition, Vector targetPosition) {
+		CheckField newCheckField = this;
 		Figure movingFigure = newCheckField.getFieldValue(startPosition);
-		movingFigure.moveTo(targetPosition, newCheckField);
 		newCheckField.setFieldValue(startPosition, null);
 		newCheckField.setFieldValue(targetPosition, movingFigure);
-		System.out.println("startPosition: (" + startPosition.getValue(0) + ", " + startPosition.getValue(1) + ")");
-		System.out.println("startPositionFieldValue: " + newCheckField.getFieldValue(startPosition));
-		System.out.println("targetPosition: (" + targetPosition.getValue(0) + ", " + targetPosition.getValue(1) + ")");
-		System.out.println("targetPositionFieldValue: " + newCheckField.getFieldValue(targetPosition));
+		newCheckField.setCheck(-1, newCheckField.checkCheck(-1));
+		newCheckField.setCheck(1, newCheckField.checkCheck(1));
 		return newCheckField;
 	}
 	
@@ -110,5 +174,15 @@ public class CheckField extends GridField<Figure> {
 			}
 		}
 		return sumCheckField;
+	}
+	
+	public CheckField copyCheckField() {
+		CheckField copiedCheckField = new CheckField(this.sizes);
+		for (int i=0; i<this.xSize; i++) {
+			for (int j=0; j<this.ySize; j++) {
+				copiedCheckField.setFieldValue(new Vector(i,j), this.checkField[i][j]);
+			}
+		}
+		return copiedCheckField;
 	}
 }

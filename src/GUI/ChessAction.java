@@ -10,8 +10,6 @@ import Figures.Figure;
 import Vector.Vector;
 
 public class ChessAction implements MouseListener {
-     //where initialization occurs:
-     //Register for mouse events on blankArea and the panel.
 	
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -40,14 +38,9 @@ public class ChessAction implements MouseListener {
             Figure panelFigure = chessField.getFieldValue(panelPosition);
         	Figure toMoveFigure = ChessFrame.getToMoveFigure();
         	PossibleMovesField toMoveFigurePossibleMoves;
-            System.out.println("panelFigure: " + panelFigure);
-            System.out.println("toMoveFigure: " + toMoveFigure);
             
             
         	if (panelFigure != null) {
-        		System.out.println("out threats: " + panelFigure.getOutThreats(panelPosition, chessField));
-                System.out.println(panelFigure.getPosition().getValue(0));
-                System.out.println(panelFigure.getPosition().getValue(1));
                 if (panelFigure.getColor() == ChessFrame.getPlayer()) {
             		ChessFrame.resetPossibleMoveFields();
                 	PossibleMovesField possibleMoves = panelFigure.showPossibleMoves(panelFigure.getPosition(), chessField);
@@ -61,14 +54,18 @@ public class ChessAction implements MouseListener {
                 } 
             }
         	
-        	System.out.println("possibleMovesShowing: " + ChessFrame.possibleMovesShowing());
         	if (ChessFrame.possibleMovesShowing()) {
             	toMoveFigurePossibleMoves = toMoveFigure.showPossibleMoves(toMoveFigure.getPosition(), chessField);
             	if (toMoveFigurePossibleMoves.getFieldValue(panelPosition)) {
-            		System.out.println("movable");
             		chessField = chessField.moveFigure(toMoveFigure.getPosition(), panelPosition);
             		int newPlayer = ChessFrame.getPlayer()*(-1);
             		ChessFrame.init2D(chessField, newPlayer);
+            		if (chessField.getCheckMate()) {
+            			System.out.println("----------");
+            			System.out.println("CHECKMATE!");
+            			System.out.println("----------");
+            			ResultFrame.initResultFrame(newPlayer*(-1));
+            		}
             		return;
             	} else {
                 	ChessFrame.setAsToMoveFigure(null);

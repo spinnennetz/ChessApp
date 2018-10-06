@@ -18,15 +18,23 @@ public class ChessFrame {
 	public static boolean possibleMovesShowing;
 	public static int player;
 	public static Figure toMoveFigure;
-
+	public static int toMoveFigurePosition;
+	public static int[] KingPositions;
 	
 	public static void initChessFrame(CheckField startPosition, int playerNumb) {
 		//Creating the Frame
 		frame = new JFrame("ChessFrame");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(900, 600);
+		frame.setSize(800, 600);
+		frame.setLocationRelativeTo(null);
+		frame.setResizable(false);
         frame.setVisible(true);
         init2D(startPosition, playerNumb);
+	}
+	
+	public static void quitFrame() {
+        frame.setVisible(false);
+        
 	}
 	
 	public static void init2D(CheckField startPosition, int playerNumb) {
@@ -36,15 +44,26 @@ public class ChessFrame {
 		
 		player = playerNumb;
 		toMoveFigure = null;
+		toMoveFigurePosition = -1;
+		KingPositions = new int[2];
 		
 		int xSize = startPosition.getXSize();
 		int ySize = startPosition.getYSize();
 		
-		for (int i=0; i<xSize; i++) {
-			for (int j=0; j<ySize; j++) {
-				Vector position = new Vector(i,j);
-				System.out.println("position: (" + i + ", " + j + ")");
-				System.out.println("value: " + startPosition.getFieldValue(position));
+		King king = (King) startPosition.getKing(playerNumb);
+		int kingXPos = -1;
+		int kingYPos = -1;
+		if(king != null) {
+			kingXPos = king.getXPosition();
+			kingYPos = king.getYPosition();
+		}
+		
+		for (int i=-1; i<=1; i+=2) {
+			KingPositions[(i+1)/2] = -1;
+			System.out.println(startPosition.getCheck(i));
+			if (startPosition.getCheck(i) && playerNumb == i) {
+				System.out.println("checkKing");
+				KingPositions[(i+1)/2] = kingXPos * ySize + kingYPos;
 			}
 		}
 		
@@ -74,7 +93,7 @@ public class ChessFrame {
         for ( int i = 0; i<xSize; i++ ) {
         	for ( int j = 0; j<ySize; j++ ) {
         		startPositionFieldValue = checkField.getFieldValue(new Vector(i,j));
-        		System.out.println(startPositionFieldValue);
+        		//System.out.println(startPositionFieldValue);
         		if(startPositionFieldValue == null) {
         			figureString = "";
         		} else {
@@ -99,8 +118,14 @@ public class ChessFrame {
     }
 	
 	public static void setAsToMoveFigure (Figure figure) {
+		Vector position = figure.getPosition();
+		int xPos = position.getValue(0);
+		int yPos = position.getValue(1);
+		int ySize = sizes.getValue(1);
 		toMoveFigure = figure;
+		toMoveFigurePosition = xPos * ySize + yPos;
 	}
+
 	
 	public static Figure getToMoveFigure() {
 		return toMoveFigure;
@@ -151,7 +176,6 @@ public class ChessFrame {
         		chessFieldLabel.setFont(new Font("Verdana",1,15));
         		
         		chessPanels[i+j*xSize] = new ChessPanel(checkField, new Vector(j,i));
-        		chessPanels[i+j*xSize].add(chessFieldLabel);
         		chessPanels[i+j*xSize].setBackground(Color.LIGHT_GRAY);
         		
         		if (i%2==0 &&(j+1)%2==0) {
@@ -170,8 +194,20 @@ public class ChessFrame {
         			chessFieldLabel.setForeground(Color.BLUE);
         			chessPanels[i+j*xSize].setBackground(Color.MAGENTA);
         		}
-
         		
+        		if ((i+j*xSize) == toMoveFigurePosition) {
+        			//System.out.println("here we go");
+        			chessFieldLabel.setForeground(Color.MAGENTA);
+        		}
+        		
+        		for (int k=0; k<2; k++) {
+        			if ((i+j*xSize) == KingPositions[k]) {
+            			//System.out.println("here we go");
+            			chessFieldLabel.setForeground(Color.CYAN);
+            		}
+        		}
+        		
+        		chessPanels[i+j*xSize].add(chessFieldLabel);
         		chessPanels[i+j*xSize].addMouseListener(chessAction);
         		chessPanels[i+j*xSize].setPreferredSize(new Dimension(500/ySize,500/xSize));
 	        	constraints.gridx = i;

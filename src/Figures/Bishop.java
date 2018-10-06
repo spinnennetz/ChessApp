@@ -38,4 +38,7 @@ public class Bishop extends Figure {
 		clone.changeColor();
 		return clone;
 	}
+
+
+
 }

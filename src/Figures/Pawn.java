@@ -55,7 +55,6 @@ public class Pawn extends Figure {
 		return possibleMoves;
 	}
 	
-	
 	@Override
 	public String getFigureType() {
 		return "Pawn";
