@@ -53,7 +53,7 @@ public abstract class GridField<Type> {
 		for (int i=0; i<this.xSize; i++) {
 			for (int j=0; j<this.ySize; j++) {
 				currentPos = new Vector(i,j);
-				if (this.getFieldValue(currentPos) != null || field.getFieldValue(currentPos) != null) {
+				if (this.getFieldValue(currentPos) != null && field.getFieldValue(currentPos) != null) {
 					positions.add(currentPos);
 				}
 			}

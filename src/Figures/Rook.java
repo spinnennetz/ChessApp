@@ -16,46 +16,8 @@ public class Rook extends Figure {
 	
 	@Override
 	public PossibleMovesField showPossibleMoves(Vector position, CheckField figurePositions) {
-		Vector fieldSizes = figurePositions.getSizes();
-		int fieldXSize = fieldSizes.getValue(0);
-		int fieldYSize = fieldSizes.getValue(1);		
-		PossibleMovesField possibleMoves = new PossibleMovesField(fieldSizes);
-		Vector checkablePosition;
-		int moveStraightDirection;
-		int moveLength;
-		boolean side;
-		boolean hitFigure;
-		boolean outOfBorder;
-		for (int k=0; k<=1; k++) {
-			side = (k!=0);
-			for (int j=0; j<=1; j++) {
-				hitFigure = false;
-				moveStraightDirection = (j==0) ? -1 : 1;
-				moveLength = 1;
-				while(!hitFigure && moveLength < Math.max(fieldXSize, fieldYSize)) {
-					outOfBorder = false;
-					checkablePosition = showStraightResult(position, moveLength * moveStraightDirection, side);
-					if (checkablePosition.getValue(0) < 0) {
-						outOfBorder = true;
-					} else if (checkablePosition.getValue(0) >= fieldXSize) {
-						outOfBorder = true;
-					} else if (checkablePosition.getValue(1) < 0) {
-						outOfBorder = true;
-					} else if (checkablePosition.getValue(1) >= fieldYSize) {
-						outOfBorder = true;
-					}
-					if(!outOfBorder) {
-						if(figurePositions.getFieldValue(checkablePosition) != null) {
-							hitFigure = true;
-						};
-						if (!hitFigure || figurePositions.getFieldValue(checkablePosition).color != this.color) {
-							possibleMoves.setFieldValue(checkablePosition, true);
-						}
-					}
-					moveLength++;
-				}
-			}
-		}
+		Vector fieldSizes = figurePositions.getSizes();	
+		PossibleMovesField possibleMoves = this.showAllPossibleStraightMoves(position, figurePositions, fieldSizes.getMax());
 		return possibleMoves;
 	}
 

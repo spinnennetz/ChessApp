@@ -18,8 +18,6 @@ public class Pawn extends Figure {
 	@Override
 	public PossibleMovesField showPossibleMoves(Vector position, CheckField figurePositions) {
 		Vector fieldSizes = figurePositions.getSizes();
-		int fieldXSize = fieldSizes.getValue(0);
-		int fieldYSize = fieldSizes.getValue(1);
 		PossibleMovesField possibleMoves = new PossibleMovesField(fieldSizes);
 		Vector checkablePosition;
 		boolean outOfBorder;
@@ -32,22 +30,13 @@ public class Pawn extends Figure {
 		moveLength *= hasBeenMoved ? 1 : 2;
 		for (int i=-1; i<=1; i++){
 			for (int j=1; j<=moveLength; j++) {
-				outOfBorder = false;
 				hitOwnFigure = false;
 				if (i==0) {
 					checkablePosition = showStraightResult(position, j * straightDirection, false);
 				} else {
 					checkablePosition = showDiagonalResult(position, j/j, straightDirection, i);
 				}
-				if (checkablePosition.getValue(0) < 0) {
-					outOfBorder = true;
-				} else if (checkablePosition.getValue(0) >= fieldXSize) {
-					outOfBorder = true;
-				} else if (checkablePosition.getValue(1) < 0) {
-					outOfBorder = true;
-				} else if (checkablePosition.getValue(1) >= fieldYSize) {
-					outOfBorder = true;
-				}
+				outOfBorder = !checkablePosition.inBounds(new Vector(0,0), fieldSizes);
 				if(!outOfBorder) {
 					Figure resultFieldFigure = figurePositions.getFieldValue(checkablePosition);
 					possibleMoves.setFieldValue(checkablePosition, true);

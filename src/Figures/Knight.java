@@ -17,8 +17,6 @@ public class Knight extends Figure {
 	@Override
 	public PossibleMovesField showPossibleMoves(Vector position, CheckField figurePositions) {
 		Vector fieldSizes = figurePositions.getSizes();
-		int fieldXSize = fieldSizes.getValue(0);
-		int fieldYSize = fieldSizes.getValue(1);
 		PossibleMovesField possibleMoves = new PossibleMovesField(fieldSizes);
 		Vector checkablePosition;
 		int moveSideDirection;
@@ -32,19 +30,9 @@ public class Knight extends Figure {
 				moveStraightDirection = (j==0) ? -1 : 1;
 				for (int i=0; i<=1; i++){
 					hitOwnFigure = false;
-					outOfBorder = false;
 					side = (i!=0);
 					checkablePosition = showKnightResult(position, moveStraightDirection, moveSideDirection, side);
-					if (checkablePosition.getValue(0) < 0) {
-						outOfBorder = true;
-					} else if (checkablePosition.getValue(0) >= fieldXSize) {
-						outOfBorder = true;
-					} else if (checkablePosition.getValue(1) < 0) {
-						outOfBorder = true;
-					} else if (checkablePosition.getValue(1) >= fieldYSize) {
-						outOfBorder = true;
-					}
-					
+					outOfBorder = !checkablePosition.inBounds(new Vector(0,0), fieldSizes);
 					if (!outOfBorder) {
 						Figure resultFieldFigure = figurePositions.getFieldValue(checkablePosition);
 						if (resultFieldFigure != null && resultFieldFigure.getColor() == this.color) {

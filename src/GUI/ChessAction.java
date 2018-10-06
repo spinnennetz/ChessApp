@@ -45,6 +45,7 @@ public class ChessAction implements MouseListener {
             
             
         	if (panelFigure != null) {
+        		System.out.println("out threats: " + panelFigure.getOutThreats(panelPosition, chessField));
                 System.out.println(panelFigure.getPosition().getValue(0));
                 System.out.println(panelFigure.getPosition().getValue(1));
                 if (panelFigure.getColor() == ChessFrame.getPlayer()) {
@@ -66,14 +67,6 @@ public class ChessAction implements MouseListener {
             	if (toMoveFigurePossibleMoves.getFieldValue(panelPosition)) {
             		System.out.println("movable");
             		chessField = chessField.moveFigure(toMoveFigure.getPosition(), panelPosition);
-            		
-            		for (int i=0; i<chessField.getXSize(); i++) {
-            			for (int j=0; j<chessField.getYSize(); j++) {
-            				Vector position = new Vector(i,j);
-            				System.out.println("position: (" + i + ", " + j + ")");
-            				System.out.println("value: " + chessField.getFieldValue(position));
-            			}
-            		}
             		int newPlayer = ChessFrame.getPlayer()*(-1);
             		ChessFrame.init2D(chessField, newPlayer);
             		return;

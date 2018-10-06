@@ -101,13 +101,81 @@ public abstract class Figure {
 		return showMoveResult(position, move);
 	}
 	
+	public PossibleMovesField showAllPossibleStraightMoves(Vector position, CheckField figurePositions, int maxMoveLength) {
+		Vector fieldSizes = figurePositions.getSizes();	
+		PossibleMovesField possibleMoves = new PossibleMovesField(fieldSizes);
+		Vector checkablePosition;
+		int moveStraightDirection;
+		int moveLength;
+		boolean side;
+		boolean hitFigure;
+		boolean outOfBorder;
+		for (int k=0; k<=1; k++) {
+			side = (k!=0);
+			for (int j=0; j<=1; j++) {
+				hitFigure = false;
+				moveStraightDirection = (j==0) ? -1 : 1;
+				moveLength = 1;
+				while(!hitFigure && moveLength < maxMoveLength) {
+					checkablePosition = showStraightResult(position, moveLength * moveStraightDirection, side);
+					outOfBorder = !checkablePosition.inBounds(new Vector(0,0), fieldSizes);
+					if(!outOfBorder) {
+						if(figurePositions.getFieldValue(checkablePosition) != null) {
+							hitFigure = true;
+						};
+						if (!hitFigure || figurePositions.getFieldValue(checkablePosition).color != this.color) {
+							possibleMoves.setFieldValue(checkablePosition, true);
+						}
+					}
+					moveLength++;
+				}
+			}
+		}
+		return possibleMoves;
+	}
+	
+	public PossibleMovesField showAllPossibleDiagonalMoves(Vector position, CheckField figurePositions, int maxMoveLength) {
+		Vector fieldSizes = figurePositions.getSizes();
+		PossibleMovesField possibleMoves = new PossibleMovesField(fieldSizes);
+		Vector checkablePosition;
+		int moveSideDirection;
+		int moveStraightDirection;
+		int moveLength;
+		boolean hitFigure;
+		boolean outOfBorder;
+		for (int k=0; k<=1; k++) {
+			moveSideDirection = (k==0) ? -1 : 1;
+			for (int j=0; j<=1; j++) {
+				hitFigure = false;
+				moveStraightDirection = (j==0) ? -1 : 1;
+				moveLength = 1;
+				while(!hitFigure && moveLength < maxMoveLength) {
+					checkablePosition = showDiagonalResult(position, moveLength, moveStraightDirection, moveSideDirection);
+					outOfBorder = !checkablePosition.inBounds(new Vector(0,0), fieldSizes);
+					if(!outOfBorder) {
+						if(figurePositions.getFieldValue(checkablePosition) != null) {
+							hitFigure = true;
+						};
+						if (!hitFigure || figurePositions.getFieldValue(checkablePosition).color != this.color) {
+							possibleMoves.setFieldValue(checkablePosition, true);
+						}
+					}
+					moveLength++;
+				}
+			}
+		}
+		return possibleMoves;
+	}
+	
 	public int getOutThreats(Vector position, CheckField figurePositions) {
 		int threatsCounter = 0;
 		PossibleMovesField possibleMoves = this.showPossibleMoves(position, figurePositions);
 		List<Vector> overlayPositions = possibleMoves.getOverlayPositions(figurePositions);
 		for (Vector overlayPosition : overlayPositions) {
 			if (possibleMoves.getFieldValue(overlayPosition)) {
-				threatsCounter++;
+				if(figurePositions.getFieldValue(overlayPosition).getColor() != this.color) {
+					threatsCounter++;
+				}
 			}
 		}
 		return threatsCounter;

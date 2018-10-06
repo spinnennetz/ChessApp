@@ -70,4 +70,26 @@ public class Vector {
 		return equal;
 	}
 	
+	public boolean inBounds(Vector lowerBounds, Vector upperBounds) {
+		boolean inBounds = true;
+		if (this.vector[0] < lowerBounds.getValue(0)) {
+			inBounds = false;
+		} else if (this.vector[0] >= upperBounds.getValue(0)) {
+			inBounds = false;
+		} else if (this.vector[1] < lowerBounds.getValue(1)) {
+			inBounds = false;
+		} else if (this.vector[1] >= upperBounds.getValue(1)) {
+			inBounds = false;
+		}
+		return inBounds;
+	}
+	
+	public int getMax() {
+		int max = this.vector[0];
+		for (int i=1; i<this.vector.length; i++) {
+			max = Math.max(max, this.vector[i]);
+		}
+		return max;
+	}
+	
 }
