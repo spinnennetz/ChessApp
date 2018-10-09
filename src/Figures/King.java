@@ -9,7 +9,7 @@ public class King extends Figure {
 
 	public King(Vector position, int color) {
 		super(position, color);
-		this.figValue = 500;
+		this.figValue = 50000;
 		this.hasBeenMoved = false;
 	}
 	

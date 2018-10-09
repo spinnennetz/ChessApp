@@ -12,6 +12,7 @@ public class MiniMax {
 	
 	public static int iterations;
 	public static CheckField checkfield;
+	public static CheckField safetyCheckfield;
 	public static Vector[] savedMove;
 	
 	public static int max(int color, int depth) {
@@ -22,9 +23,12 @@ public class MiniMax {
 		int maxValue = Integer.MIN_VALUE;
 		while (!allPossibleMoves.isEmpty()) {
 			Vector[] move = allPossibleMoves.get(0);
-			checkfield = checkfield.moveFigure(move[0], move[1]);
+			//checkfield.print();
+			checkfield.moveFigure(move[0], move[1]);
+			//checkfield.print();
 			int value = min(color*(-1), depth - 1);
-			checkfield = checkfield.moveBackFigure(move[0], move[1]);
+			//checkfield.moveBackFigure(move[0], move[1]);
+			checkfield = safetyCheckfield.copyCheckField();
 			if (value > maxValue) {
 				maxValue = value;
 				if (depth == iterations) {
@@ -45,9 +49,12 @@ public class MiniMax {
 		int minValue = Integer.MAX_VALUE;
 		while (!allPossibleMoves.isEmpty()) {
 			Vector[] move = allPossibleMoves.get(0);
-			checkfield = checkfield.moveFigure(move[0], move[1]);
+			//checkfield.print();
+			checkfield.moveFigure(move[0], move[1]);
+			//checkfield.print();
 			int value = max(color*(-1), depth - 1);
-			checkfield = checkfield.moveBackFigure(move[0], move[1]);
+			//checkfield.moveBackFigure(move[0], move[1]);
+			checkfield = safetyCheckfield.copyCheckField();
 			if (value < minValue) {
 				minValue = value;
 				if (depth == iterations) {
@@ -63,8 +70,10 @@ public class MiniMax {
 	public static Vector[] init(CheckField figurePositions, int color, int depth) {
 		iterations = depth;
 		checkfield = figurePositions.copyCheckField();
+		safetyCheckfield = figurePositions.copyCheckField();
 		savedMove = null;
-		max(color, iterations);
+		int rating = max(color, iterations);
+		System.out.println("rating: " + rating);
 		return savedMove;
 	}
 	
@@ -79,7 +88,7 @@ public class MiniMax {
 			leftFigsRating += figure.getFigValue() * figColor/color;
 			threatRating += checkfield.getThreatsAt(figPosition, figColor) * figColor/color;
 		}
-		int rating = leftFigsRating*0 + threatRating;
+		int rating = threatRating - leftFigsRating;
 		return rating;
 	}
 

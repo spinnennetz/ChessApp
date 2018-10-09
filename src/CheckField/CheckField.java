@@ -130,6 +130,9 @@ public class CheckField extends GridField<Figure> {
 		if (this.getKing(color) == null) {
 			this.checkMate = true;
 			return true;
+		} else if (this.getKing(color*(-1)) == null) {
+			this.checkMate = true;
+			return true;
 		} else {
 			return this.getKing(color).getCurrentInThreats(this) > 0;
 		}
@@ -227,5 +230,22 @@ public class CheckField extends GridField<Figure> {
 			}
 		}
 		return copiedCheckField;
+	}
+	
+	public void print() {
+		System.out.println("PRINT!");
+		String line;
+		for (int i=0; i<this.xSize; i++) {
+			line = "";
+			for (int j=0; j<this.ySize; j++) {
+				Figure figure = this.checkField[i][j];
+				if (figure != null) {
+					line += this.checkField[i][j].getFigureType() + " | ";
+				} else {
+					line += "null | ";
+				}
+			}
+			System.out.println(line);
+		}
 	}
 }

@@ -68,7 +68,7 @@ public class ChessAction implements MouseListener {
             			ResultFrame.initResultFrame(newPlayer*(-1));
             			return;
             		}
-            		Vector[] kiMove = KI.calculateNext(chessField, newPlayer, 2);
+            		Vector[] kiMove = KI.calculateNext(chessField, newPlayer, 3);
             		Vector kiMoveStart = kiMove[0];
             		Vector kiMoveTarget = kiMove[1];
             		chessField = chessField.moveFigure(kiMoveStart, kiMoveTarget);
