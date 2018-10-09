@@ -10,6 +10,7 @@ public class CheckField extends GridField<Figure> {
 	public Figure[][] checkField;
 	public boolean[] check;
 	public boolean checkMate;
+	public List<Figure> beatenFigures;
 
 	public CheckField(Vector sizes) {
 		super(sizes);
@@ -17,6 +18,7 @@ public class CheckField extends GridField<Figure> {
 		this.gridfield = this.checkField;
 		this.check = new boolean[2];
 		this.checkMate = false;
+		this.beatenFigures = new LinkedList<Figure>();
 	}
 
 	@Override
@@ -69,6 +71,26 @@ public class CheckField extends GridField<Figure> {
 		return figureList;
 	}
 	
+	public List<Vector[]> getAllPossibleMoves(int color) {
+		List<Figure> figureList = this.getCurrentFigures();
+		List<Vector[]> allPossibleMoves = new LinkedList<Vector[]>();
+		for (Figure figure : figureList) {
+			if (figure.getColor() == color) {
+				Vector[] move = new Vector[2];
+				Vector figurePos = figure.getPosition();
+				move[0] = figurePos;
+				PossibleMovesField possibleMoves = figure.showPossibleMoves(figurePos, this);
+				List<Vector> possibleTargets = possibleMoves.getTrueOverlayPositions(possibleMoves);
+				for (Vector possibleTarget : possibleTargets) {
+					move[1] = possibleTarget;
+					allPossibleMoves.add(move);
+				}
+			}
+			
+		}
+		return allPossibleMoves;
+	}
+	
 	public ThreatField getThreats(int color) {
 		ThreatField result = new ThreatField(this.sizes);
 		PossibleMovesField possibleMoves = new PossibleMovesField(this.sizes);
@@ -116,9 +138,23 @@ public class CheckField extends GridField<Figure> {
 	public CheckField moveFigure(Vector startPosition, Vector targetPosition) {
 		CheckField newCheckField = this;
 		Figure movingFigure = this.getFieldValue(startPosition);
-		if (movingFigure.moveTo(targetPosition, this)) {
-			newCheckField = this.showMove(startPosition, targetPosition);
+		newCheckField = this.showMove(startPosition, targetPosition);
+		if(movingFigure != null) {
+			movingFigure.moveTo(targetPosition, this);
 		}
+		return newCheckField;
+	}
+	
+	public CheckField moveBackFigure(Vector startPosition, Vector targetPosition) {
+		CheckField newCheckField = this;
+		Figure movingFigure = this.getFieldValue(targetPosition);
+		newCheckField = this.showMove(targetPosition, startPosition);
+		
+		if(movingFigure != null) {
+			movingFigure.moveBackTo(startPosition, this);
+		}
+		Figure lastTargetFigure = this.beatenFigures.get(0);
+		this.setFieldValue(lastTargetFigure.getPosition(), lastTargetFigure);
 		return newCheckField;
 	}
 	
@@ -180,7 +216,14 @@ public class CheckField extends GridField<Figure> {
 		CheckField copiedCheckField = new CheckField(this.sizes);
 		for (int i=0; i<this.xSize; i++) {
 			for (int j=0; j<this.ySize; j++) {
-				copiedCheckField.setFieldValue(new Vector(i,j), this.checkField[i][j]);
+				Figure figure = this.checkField[i][j];
+				Figure clonedFigure;
+				if (figure != null) {
+					clonedFigure = figure.clone();
+				} else {
+					clonedFigure = null;
+				}
+				copiedCheckField.setFieldValue(new Vector(i,j), clonedFigure);
 			}
 		}
 		return copiedCheckField;

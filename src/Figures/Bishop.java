@@ -29,6 +29,7 @@ public class Bishop extends Figure {
 	@Override
 	public Figure clone() {
 		Bishop clone = new Bishop(this.position, this.color);
+		clone.hasBeenMoved = this.hasBeenMoved;
 		return clone;
 	}
 

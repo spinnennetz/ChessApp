@@ -30,6 +30,7 @@ public class King extends Figure {
 	@Override
 	public Figure clone() {
 		King clone = new King(this.position, this.color);
+		clone.hasBeenMoved = this.hasBeenMoved;
 		return clone;
 	}
 

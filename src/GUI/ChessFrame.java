@@ -60,9 +60,7 @@ public class ChessFrame {
 		
 		for (int i=-1; i<=1; i+=2) {
 			KingPositions[(i+1)/2] = -1;
-			System.out.println(startPosition.getCheck(i));
 			if (startPosition.getCheck(i) && playerNumb == i) {
-				System.out.println("checkKing");
 				KingPositions[(i+1)/2] = kingXPos * ySize + kingYPos;
 			}
 		}
@@ -93,7 +91,6 @@ public class ChessFrame {
         for ( int i = 0; i<xSize; i++ ) {
         	for ( int j = 0; j<ySize; j++ ) {
         		startPositionFieldValue = checkField.getFieldValue(new Vector(i,j));
-        		//System.out.println(startPositionFieldValue);
         		if(startPositionFieldValue == null) {
         			figureString = "";
         		} else {
@@ -196,13 +193,11 @@ public class ChessFrame {
         		}
         		
         		if ((i+j*xSize) == toMoveFigurePosition) {
-        			//System.out.println("here we go");
         			chessFieldLabel.setForeground(Color.MAGENTA);
         		}
         		
         		for (int k=0; k<2; k++) {
         			if ((i+j*xSize) == KingPositions[k]) {
-            			//System.out.println("here we go");
             			chessFieldLabel.setForeground(Color.CYAN);
             		}
         		}

@@ -28,6 +28,7 @@ public class Queen extends Figure {
 	@Override
 	public Figure clone() {
 		Queen clone = new Queen(this.position, this.color);
+		clone.hasBeenMoved = this.hasBeenMoved;
 		return clone;
 	}
 

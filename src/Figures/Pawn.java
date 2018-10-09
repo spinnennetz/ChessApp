@@ -5,13 +5,11 @@ import Vector.Vector;
 
 public class Pawn extends Figure {
 	
-	public boolean hasBeenMoved;
 	public boolean walkedThrough;
 
 	public Pawn(Vector position, int color) {
 		super(position, color);
 		this.figValue = 1;
-		this.hasBeenMoved = false;
 		this.walkedThrough = false;
 	}
 	
@@ -21,7 +19,7 @@ public class Pawn extends Figure {
 		PossibleMovesField possibleMoves = new PossibleMovesField(fieldSizes);
 		Vector checkablePosition;
 		boolean outOfBorder;
-		boolean hitOwnFigure;
+		boolean hitFigure;
 		int straightDirection = 1;
 		if (this.color == -1) {
 			straightDirection = -1;
@@ -30,7 +28,7 @@ public class Pawn extends Figure {
 		moveLength *= hasBeenMoved ? 1 : 2;
 		for (int i=-1; i<=1; i++){
 			for (int j=1; j<=moveLength; j++) {
-				hitOwnFigure = false;
+				hitFigure = false;
 				if (i==0) {
 					checkablePosition = showStraightResult(position, j * straightDirection, false);
 				} else {
@@ -40,13 +38,13 @@ public class Pawn extends Figure {
 				if(!outOfBorder) {
 					Figure resultFieldFigure = figurePositions.getFieldValue(checkablePosition);
 					possibleMoves.setFieldValue(checkablePosition, true);
-					if (resultFieldFigure != null && resultFieldFigure.getColor() == this.color) {
-						hitOwnFigure = true;
+					if (resultFieldFigure != null) {
+						hitFigure = true;
 					}
 					if(resultFieldFigure == null && i!=0) {
 						possibleMoves.setFieldValue(checkablePosition, false);
 					}
-					if (hitOwnFigure) {
+					if (hitFigure) {
 						possibleMoves.setFieldValue(checkablePosition, false);
 					}
 				}
@@ -63,6 +61,7 @@ public class Pawn extends Figure {
 	@Override
 	public Figure clone() {
 		Pawn clone = new Pawn(this.position, this.color);
+		clone.hasBeenMoved = this.hasBeenMoved;
 		return clone;
 	}
 

@@ -8,6 +8,7 @@ import java.awt.event.MouseListener;
 import CheckField.*;
 import Figures.Figure;
 import Vector.Vector;
+import KI.KI;
 
 public class ChessAction implements MouseListener {
 	
@@ -65,7 +66,17 @@ public class ChessAction implements MouseListener {
             			System.out.println("CHECKMATE!");
             			System.out.println("----------");
             			ResultFrame.initResultFrame(newPlayer*(-1));
+            			return;
             		}
+            		Vector[] kiMove = KI.calculateNext(chessField, newPlayer, 2);
+            		Vector kiMoveStart = kiMove[0];
+            		Vector kiMoveTarget = kiMove[1];
+            		chessField = chessField.moveFigure(kiMoveStart, kiMoveTarget);
+            		newPlayer = newPlayer * (-1);
+            		System.out.println("KI moving:");
+            		System.out.println("startPosition: " + kiMoveStart.getValue(0) + ", " + kiMoveStart.getValue(1));
+            		System.out.println("targetPosition: " + kiMoveTarget.getValue(0) + ", " + kiMoveTarget.getValue(1));
+            		ChessFrame.init2D(chessField, newPlayer);
             		return;
             	} else {
                 	ChessFrame.setAsToMoveFigure(null);

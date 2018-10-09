@@ -29,6 +29,7 @@ public class Rook extends Figure {
 	@Override
 	public Figure clone() {
 		Rook clone = new Rook(this.position, this.color);
+		clone.hasBeenMoved = this.hasBeenMoved;
 		return clone;
 	}
 

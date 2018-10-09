@@ -16,6 +16,7 @@ public abstract class Figure {
 	public int figValue;
 	public boolean beaten;
 	public int color;
+	public boolean hasBeenMoved;
 
 	public Figure(Vector position, int color) {
 		this.position = position;
@@ -23,6 +24,7 @@ public abstract class Figure {
 		this.yPos = position.getValue(1);
 		this.beaten = false;
 		this.color = color;
+		this.hasBeenMoved = false;
 	}
 	
 	public Vector getPosition() {
@@ -217,17 +219,29 @@ public abstract class Figure {
 		return threatsCounter;
 	}
 	
-	public boolean moveTo(Vector targetPosition, CheckField figurePositions) {
-		PossibleMovesField possibleMoves = this.showPossibleMoves(this.position, figurePositions);
-		boolean moveWorking = possibleMoves.getFieldValue(targetPosition);
-		if (moveWorking) {
-			this.setPosition(targetPosition);
-		}
+	public void moveTo(Vector targetPosition, CheckField figurePositions) {
+		this.setPosition(targetPosition);
 		Figure figureOnTarget = figurePositions.getFieldValue(targetPosition);
+		figurePositions.beatenFigures.add(0, figureOnTarget);
 		if (figureOnTarget != null) {
 			figureOnTarget.remove();
 		}
-		return moveWorking;
+		this.hasBeenMoved = true;
+	}
+	
+	public void moveBackTo(Vector startPosition, CheckField figurePositions) {
+		Vector targetPosition = this.position;
+		this.setPosition(startPosition);
+		Figure figureOnTarget = figurePositions.beatenFigures.get(0);
+		if (figureOnTarget != null) {
+			figureOnTarget.getBack();
+			figureOnTarget.setPosition(targetPosition);
+		}
+		//TODO: has been moved
+	}
+	
+	public void getBack() {
+		this.beaten = false;
 	}
 
 	public void remove() {

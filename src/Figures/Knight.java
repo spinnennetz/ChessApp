@@ -56,6 +56,7 @@ public class Knight extends Figure {
 	@Override
 	public Figure clone() {
 		Knight clone = new Knight(this.position, this.color);
+		clone.hasBeenMoved = this.hasBeenMoved;
 		return clone;
 	}
 
