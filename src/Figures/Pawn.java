@@ -38,13 +38,13 @@ public class Pawn extends Figure {
 				if(!outOfBorder) {
 					Figure resultFieldFigure = figurePositions.getFieldValue(checkablePosition);
 					possibleMoves.setFieldValue(checkablePosition, true);
-					if (resultFieldFigure != null) {
+					if (resultFieldFigure != null && resultFieldFigure.getColor() != this.color) {
 						hitFigure = true;
 					}
-					if(resultFieldFigure == null && i!=0) {
+					if(!hitFigure && i!=0) {
 						possibleMoves.setFieldValue(checkablePosition, false);
 					}
-					if (hitFigure) {
+					if (resultFieldFigure != null && i==0) {
 						possibleMoves.setFieldValue(checkablePosition, false);
 					}
 				}

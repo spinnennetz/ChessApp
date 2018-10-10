@@ -14,6 +14,7 @@ public class MiniMax {
 	public static CheckField checkfield;
 	public static CheckField safetyCheckfield;
 	public static Vector[] savedMove;
+	public static boolean theThingWeWant;
 	
 	public static int max(int color, int depth) {
 		List<Vector[]> allPossibleMoves = checkfield.getAllPossibleMoves(color);
@@ -21,24 +22,18 @@ public class MiniMax {
 			return rate(color);
 		}
 		int maxValue = Integer.MIN_VALUE;
-		while (!allPossibleMoves.isEmpty()) {
-			Vector[] move = allPossibleMoves.get(0);
-			//checkfield.print();
-			checkfield.moveFigure(move[0], move[1]);
-			//checkfield.print();
+		for (Vector[] possibleMove : allPossibleMoves) {
+			checkfield.moveFigure(possibleMove[0], possibleMove[1]);
 			int value = min(color*(-1), depth - 1);
-			//checkfield.moveBackFigure(move[0], move[1]);
-			checkfield = safetyCheckfield.copyCheckField();
+			checkfield.moveBackFigure(possibleMove[0], possibleMove[1]);
 			if (value > maxValue) {
 				maxValue = value;
 				if (depth == iterations) {
-					savedMove = move;
+					savedMove = possibleMove;
 				}
 			}
-			allPossibleMoves.remove(0);
 		}
 		return maxValue;
-		
 	}
 	
 	public static int min(int color, int depth) {
@@ -47,21 +42,16 @@ public class MiniMax {
 			return rate(color);
 		}
 		int minValue = Integer.MAX_VALUE;
-		while (!allPossibleMoves.isEmpty()) {
-			Vector[] move = allPossibleMoves.get(0);
-			//checkfield.print();
-			checkfield.moveFigure(move[0], move[1]);
-			//checkfield.print();
+		for (Vector[] possibleMove : allPossibleMoves) {
+			checkfield.moveFigure(possibleMove[0], possibleMove[1]);
 			int value = max(color*(-1), depth - 1);
-			//checkfield.moveBackFigure(move[0], move[1]);
-			checkfield = safetyCheckfield.copyCheckField();
+			checkfield.moveBackFigure(possibleMove[0], possibleMove[1]);
 			if (value < minValue) {
 				minValue = value;
 				if (depth == iterations) {
-					savedMove = move;
+					savedMove = possibleMove;
 				}
 			}
-			allPossibleMoves.remove(0);
 		}
 		return minValue;
 		
@@ -88,7 +78,7 @@ public class MiniMax {
 			leftFigsRating += figure.getFigValue() * figColor/color;
 			threatRating += checkfield.getThreatsAt(figPosition, figColor) * figColor/color;
 		}
-		int rating = threatRating - leftFigsRating;
+		int rating = leftFigsRating + threatRating;
 		return rating;
 	}
 

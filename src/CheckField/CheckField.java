@@ -76,18 +76,19 @@ public class CheckField extends GridField<Figure> {
 		List<Vector[]> allPossibleMoves = new LinkedList<Vector[]>();
 		for (Figure figure : figureList) {
 			if (figure.getColor() == color) {
-				Vector[] move = new Vector[2];
 				Vector figurePos = figure.getPosition();
-				move[0] = figurePos;
+				//System.out.println("START: " + figurePos.getValue(0) + ", " + figurePos.getValue(1));
 				PossibleMovesField possibleMoves = figure.showPossibleMoves(figurePos, this);
 				List<Vector> possibleTargets = possibleMoves.getTrueOverlayPositions(possibleMoves);
 				for (Vector possibleTarget : possibleTargets) {
+					Vector[] move = new Vector[2];
+					move[0] = figurePos;
 					move[1] = possibleTarget;
 					allPossibleMoves.add(move);
 				}
 			}
-			
 		}
+		
 		return allPossibleMoves;
 	}
 	
@@ -141,10 +142,10 @@ public class CheckField extends GridField<Figure> {
 	public CheckField moveFigure(Vector startPosition, Vector targetPosition) {
 		CheckField newCheckField = this;
 		Figure movingFigure = this.getFieldValue(startPosition);
-		newCheckField = this.showMove(startPosition, targetPosition);
 		if(movingFigure != null) {
 			movingFigure.moveTo(targetPosition, this);
 		}
+		newCheckField = this.showMove(startPosition, targetPosition);
 		return newCheckField;
 	}
 	
@@ -157,7 +158,7 @@ public class CheckField extends GridField<Figure> {
 			movingFigure.moveBackTo(startPosition, this);
 		}
 		Figure lastTargetFigure = this.beatenFigures.get(0);
-		this.setFieldValue(lastTargetFigure.getPosition(), lastTargetFigure);
+		this.setFieldValue(targetPosition, lastTargetFigure);
 		return newCheckField;
 	}
 	

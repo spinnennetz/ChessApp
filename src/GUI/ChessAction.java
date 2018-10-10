@@ -40,7 +40,6 @@ public class ChessAction implements MouseListener {
         	Figure toMoveFigure = ChessFrame.getToMoveFigure();
         	PossibleMovesField toMoveFigurePossibleMoves;
             
-            
         	if (panelFigure != null) {
                 if (panelFigure.getColor() == ChessFrame.getPlayer()) {
             		ChessFrame.resetPossibleMoveFields();
@@ -68,15 +67,19 @@ public class ChessAction implements MouseListener {
             			ResultFrame.initResultFrame(newPlayer*(-1));
             			return;
             		}
-            		Vector[] kiMove = KI.calculateNext(chessField, newPlayer, 3);
+            		Vector[] kiMove = KI.calculateNext(chessField, newPlayer, 2);
             		Vector kiMoveStart = kiMove[0];
             		Vector kiMoveTarget = kiMove[1];
             		chessField = chessField.moveFigure(kiMoveStart, kiMoveTarget);
             		newPlayer = newPlayer * (-1);
-            		System.out.println("KI moving:");
-            		System.out.println("startPosition: " + kiMoveStart.getValue(0) + ", " + kiMoveStart.getValue(1));
-            		System.out.println("targetPosition: " + kiMoveTarget.getValue(0) + ", " + kiMoveTarget.getValue(1));
             		ChessFrame.init2D(chessField, newPlayer);
+            		if (chessField.getCheckMate()) {
+            			System.out.println("----------");
+            			System.out.println("CHECKMATE!");
+            			System.out.println("----------");
+            			ResultFrame.initResultFrame(newPlayer*(-1));
+            			return;
+            		}
             		return;
             	} else {
                 	ChessFrame.setAsToMoveFigure(null);

@@ -115,12 +115,16 @@ public class ChessFrame {
     }
 	
 	public static void setAsToMoveFigure (Figure figure) {
-		Vector position = figure.getPosition();
-		int xPos = position.getValue(0);
-		int yPos = position.getValue(1);
-		int ySize = sizes.getValue(1);
 		toMoveFigure = figure;
-		toMoveFigurePosition = xPos * ySize + yPos;
+		if(figure == null) {
+			toMoveFigurePosition = -1;
+		} else {
+			Vector position = figure.getPosition();
+			int xPos = position.getValue(0);
+			int yPos = position.getValue(1);
+			int ySize = sizes.getValue(1);
+			toMoveFigurePosition = xPos * ySize + yPos;
+		}
 	}
 
 	
@@ -242,5 +246,3 @@ public class ChessFrame {
 	}
 
 }
-
- 
